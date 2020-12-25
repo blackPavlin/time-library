@@ -31,8 +31,8 @@
               <div class="buttons-list">
                 <button
                   class="button button-success"
-                  type="submit"
                   :class="{ 'button--disable': v.$invalid }"
+                  type="submit"
                   >
                     Login
                 </button>
@@ -62,6 +62,7 @@ import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
+import store from '@/store';
 
 export default defineComponent({
   name: 'Login',
@@ -92,6 +93,8 @@ export default defineComponent({
         };
 
         submitStatus.value = 'PENDING';
+
+        await store.dispatch('login', payload);
 
         submitStatus.value = 'OK';
         router.push('/home');

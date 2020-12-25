@@ -19,8 +19,11 @@ export class TaskService {
     return await this.taskModel.findOne({ user: userID, _id: taskID });
   }
 
-  public async createTask(task: CreateTaskDto): Promise<TaskDocument> {
-    const createdTask = new this.taskModel(task);
+  public async createTask(
+    userID: string,
+    task: CreateTaskDto,
+  ): Promise<TaskDocument> {
+    const createdTask = new this.taskModel({ ...task, ...{ user: userID } });
     return await createdTask.save();
   }
 }

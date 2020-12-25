@@ -79,6 +79,7 @@ import {
   minLength,
   sameAs,
 } from '@vuelidate/validators';
+import store from '@/store';
 
 export default defineComponent({
   name: 'Registration',
@@ -93,7 +94,7 @@ export default defineComponent({
     const rules = {
       login: { required, email },
       password: { required, minLength: minLength(6) },
-      confirmPassword: { sameAsPassword: sameAs(password.value, 'password') },
+      confirmPassword: { sameAs: sameAs(password, 'password') },
     };
 
     const v = useVuelidate(rules, { login, password, confirmPassword });
@@ -111,7 +112,8 @@ export default defineComponent({
         };
 
         submitStatus.value = 'PENDING';
-
+        await store.dispatch('signup', payload);
+        await store.dispatch('login', payload);
         submitStatus.value = 'OK';
         router.push('/home');
       } catch (error) {

@@ -1,5 +1,4 @@
-  
-.taskList-enter-active, .taskList-leave-active {
+  .taskList-enter-active, .taskList-leave-active {
 	transition: all .6s;
 }
   

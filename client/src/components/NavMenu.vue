@@ -18,7 +18,7 @@
                       <router-link class="navbar-link" to="/home">Home</router-link>
                     </li>
                     <li class="navbar-item" @click="showMenu = false" v-if="isAuth">
-                      <router-link class="navbar-link" to="/task">Task</router-link>
+                      <router-link class="navbar-link" to="/tasks">Tasks</router-link>
                     </li>
                     <li class="navbar-item" @click="showMenu = false" v-if="!isAuth">
                       <router-link class="navbar-link" to="/registration">Registration</router-link>
@@ -37,14 +37,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
+import store from '@/store';
 
 export default defineComponent({
   name: 'NavMenu',
   setup() {
     const showMenu = ref(false);
+    const isAuth = computed(() => store.getters.isAuth);
 
-    return { showMenu };
+    return { showMenu, isAuth };
   },
 });
 </script>
