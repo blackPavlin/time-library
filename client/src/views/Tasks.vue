@@ -24,18 +24,14 @@
       </div>
     </div>
     <div class="task-list">
-      <transition-group name="taskList">
-        <TaskItem v-bind="tasks"/>
-      </transition-group>
+      <TaskItem :filter="filter"/>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-/* eslint-disable no-unreachable */
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref } from 'vue';
 import TaskItem from '@/components/TaskItem.vue';
-import store, { Task } from '@/store';
 
 export default defineComponent({
   name: 'Tasks',
@@ -49,25 +45,8 @@ export default defineComponent({
     const descrEditing = ref('');
     const editingTaskID = ref('');
 
-    store.dispatch('getTasks');
-
-    const tasks = computed((): Task[] => {
-      switch (filter.value) {
-        case 'active':
-          return store.getters.getActiveTasks;
-          break;
-        case 'completed':
-          return store.getters.getCompletedTasks;
-          break;
-        default:
-          return store.getters.getTasks;
-          break;
-      }
-    });
-    console.log(store.getters.getTasks);
-
     return {
-      tasks,
+      filter,
       showPopup,
       titleEditing,
       descrEditing,

@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
 import {
   createStore,
   MutationTree,
@@ -21,6 +22,12 @@ export interface Task {
   time: number;
   tags: string[];
   completed: boolean;
+}
+
+export interface UpdateTask {
+  title?: string;
+  description?: string;
+  completed?: boolean;
 }
 
 const state: RootState = {
@@ -59,6 +66,14 @@ const actions: ActionTree<RootState, RootState> = {
   },
   async createTask({ commit }, payload: Task): Promise<void> {
     await client.post<Task>('/task', payload);
+  },
+  async updateTask({ dispatch }, payload: { taskID: string; task: UpdateTask }): Promise<void> {
+    await client.put<Task>(`/task/${payload.taskID}`, payload.task);
+    await dispatch('getTasks');
+  },
+  async removeTask({ dispatch }, taskID: string): Promise<void> {
+    await client.delete<Task>(`/task/${taskID}`);
+    await dispatch('getTasks');
   },
 };
 

@@ -147,6 +147,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import store, { Task } from '@/store';
+import { useTime } from '@/composition/time';
 
 export default defineComponent({
   name: 'Home',
@@ -168,12 +169,6 @@ export default defineComponent({
     };
 
     const v = useVuelidate(rules, { title });
-
-    const getHoursAndMinutes = (minutes: number): string => {
-      const hours = Math.trunc(minutes / 60);
-      const min = minutes % 60;
-      return `${hours} Hours ${min} Minutes`;
-    };
 
     const filmTime = computed((): number => {
       const time = Number(filmHours.value) * 60 + Number(filmMinutes.value);
@@ -213,6 +208,8 @@ export default defineComponent({
         serialSeries.value = 8;
         serialSeriesMinutes.value = 40;
         tagMenuShow.value = false;
+
+        v.value.$reset();
       } catch (error) {
         console.error(error);
       }
@@ -246,6 +243,7 @@ export default defineComponent({
     };
 
     return {
+      ...useTime(),
       title,
       description,
       whatWatch,
@@ -259,7 +257,6 @@ export default defineComponent({
       tags,
       v,
       onSubmit,
-      getHoursAndMinutes,
       filmTime,
       serialTime,
       newTag,
