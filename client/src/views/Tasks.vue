@@ -1,7 +1,7 @@
 <template>
   <div class="tasks">
     <div class="task-list__header">
-      <h1 class="ui-title-1">Library</h1>
+      <h1 class="ui-title-2">Library</h1>
       <div class="buttons-list">
         <div
           class="button button--round button-default"

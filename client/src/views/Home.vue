@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1 class="ui-title-1">Home</h1>
+    <h1 class="ui-title-2">Home</h1>
     <form @submit.prevent="onSubmit">
       <div class="form-item" :class="{ errorInput: v.title.$error }">
         <input
