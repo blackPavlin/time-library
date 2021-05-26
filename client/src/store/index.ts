@@ -8,12 +8,7 @@ import {
 } from 'vuex';
 import client from '../plugins/axios';
 
-interface RootState {
-  token: string;
-  tasks: Task[];
-}
-
-export interface Task {
+export type Task = {
   _id?: string;
   user?: string;
   title: string;
@@ -24,10 +19,16 @@ export interface Task {
   completed: boolean;
 }
 
-export interface UpdateTask {
-  title?: string;
-  description?: string;
-  completed?: boolean;
+interface RootState {
+  token: string;
+  tasks: Task[];
+}
+
+export type UpdateTask = {
+  title: string;
+  description: string;
+} | {
+  completed: boolean
 }
 
 const state: RootState = {

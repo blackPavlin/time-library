@@ -52,6 +52,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.header-logo {
+  color: #333;
+  font-size: 1.333333333333333rem;
+  white-space: nowrap;
+}
+
 @media screen and (max-width: 480px) {
   .navbar-item,
   .navbar-link {

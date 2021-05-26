@@ -1,10 +1,12 @@
 <template>
   <div class="wrapper">
     <header>
-      <NavMenu />
+      <nav-menu />
     </header>
     <div class="content-wrapper">
-      <router-view/>
+      <div class="container">
+        <router-view/>
+      </div>
     </div>
   </div>
 </template>

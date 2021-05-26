@@ -5,18 +5,21 @@
       <div class="buttons-list">
         <div
           class="button button--round button-default"
+          :class="{ active: filter === 'active' }"
           @click="filter = 'active'"
         >
           Active
         </div>
         <div
           class="button button--round button-default"
+          :class="{ active: filter === 'completed' }"
           @click="filter = 'completed'"
         >
           Completed
         </div>
         <div
           class="button button--round button-default"
+          :class="{ active: filter === 'all' }"
           @click="filter = 'all'"
         >
         All
@@ -24,7 +27,7 @@
       </div>
     </div>
     <div class="task-list">
-      <TaskItem :filter="filter"/>
+      <task-item :filter="filter"/>
     </div>
   </div>
 </template>
@@ -40,17 +43,9 @@ export default defineComponent({
   },
   setup() {
     const filter = ref('active');
-    const showPopup = ref(false);
-    const titleEditing = ref('');
-    const descrEditing = ref('');
-    const editingTaskID = ref('');
 
     return {
       filter,
-      showPopup,
-      titleEditing,
-      descrEditing,
-      editingTaskID,
     };
   },
 });
@@ -88,6 +83,11 @@ export default defineComponent({
 
       &:last-child {
         margin-right: 0;
+      }
+
+      &.active {
+        background-color: #444ce0;
+        color: #fff;
       }
     }
   }

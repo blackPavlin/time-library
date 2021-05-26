@@ -17,7 +17,7 @@
             </span>
             <span>Total Time: {{ getHoursAndMinutes(task.time) }} </span>
           </div>
-          <span class="button-close" @click="removeTask(task._id)"></span>
+          <span class="button-close" @click="startDeleteTask(task._id, task.title)"></span>
         </div>
         <div class="task-item__content">
             <div class="task-item__header">
@@ -67,24 +67,48 @@
       </div>
     </div>
   </transition-group>
+  <edit-modal
+    v-if="showEditPopup"
+    :taskID="editTaskID"
+    :title="editTitle"
+    :description="editDescription"
+    @close="stopEditTask"
+  />
+  <delete-modal
+    v-if="showDeletePopup"
+    :taskID="deleteTaskID"
+    :title="deleteTitle"
+    @close="stopDeleteTask"
+  />
 </template>
 
 <script lang="ts">
-/* eslint-disable no-unreachable */
 import { defineComponent, computed, ref } from 'vue';
 import store, { Task } from '@/store';
 import { useTime } from '@/composition/time';
+import EditModal from '@/components/EditModal.vue';
+import DeleteModal from '@/components/DeleteModal.vue';
 
 export default defineComponent({
   name: 'TaskItem',
   props: {
-    filter: String,
+    filter: {
+      type: String,
+      required: true,
+    },
+  },
+  components: {
+    EditModal,
+    DeleteModal,
   },
   setup(props) {
     const showEditPopup = ref(false);
     const editTaskID = ref('');
     const editTitle = ref('');
     const editDescription = ref('');
+    const showDeletePopup = ref(false);
+    const deleteTaskID = ref('');
+    const deleteTitle = ref('');
 
     store.dispatch('getTasks');
 
@@ -92,13 +116,10 @@ export default defineComponent({
       switch (props.filter) {
         case 'active':
           return store.getters.getActiveTasks;
-          break;
         case 'completed':
           return store.getters.getCompletedTasks;
-          break;
         default:
           return store.getters.getTasks;
-          break;
       }
     });
 
@@ -117,15 +138,28 @@ export default defineComponent({
       }
     };
 
-    const removeTask = async (taskID: string): Promise<void> => {
-      try {
-        await store.dispatch('removeTask', taskID);
-      } catch (error) {
-        console.error(error);
-      }
+    const startDeleteTask = (
+      taskID: string,
+      title: string,
+    ): void => {
+      showDeletePopup.value = true;
+
+      deleteTaskID.value = taskID;
+      deleteTitle.value = title;
     };
 
-    const startEditTask = (taskID: string, title: string, description: string) => {
+    const stopDeleteTask = (): void => {
+      showDeletePopup.value = false;
+
+      deleteTaskID.value = '';
+      deleteTitle.value = '';
+    };
+
+    const startEditTask = (
+      taskID: string,
+      title: string,
+      description: string,
+    ): void => {
       showEditPopup.value = true;
 
       editTaskID.value = taskID;
@@ -133,13 +167,29 @@ export default defineComponent({
       editDescription.value = description;
     };
 
+    const stopEditTask = (): void => {
+      showEditPopup.value = false;
+
+      editTaskID.value = '';
+      editTitle.value = '';
+      editDescription.value = '';
+    };
+
     return {
       ...useTime(),
       tasks,
       completeTask,
-      removeTask,
       showEditPopup,
+      editTaskID,
+      editTitle,
+      editDescription,
       startEditTask,
+      stopEditTask,
+      showDeletePopup,
+      deleteTaskID,
+      deleteTitle,
+      startDeleteTask,
+      stopDeleteTask,
     };
   },
 });
@@ -197,6 +247,16 @@ export default defineComponent({
 
   .task-item__body {
     margin-bottom: 20px;
+  }
+
+  .buttons-list {
+    .button {
+      margin-right: 12px;
+    }
+
+    .button:last-child {
+      margin-right: 0;
+    }
   }
 
   .task-item__footer {
