@@ -1,0 +1,10 @@
+dist
+node_modules
+tests
+.eslintignore
+.eslint
+.gitignore
+.prettierrc
+jest.config.js
+tsconfig.eslint.json
+*.md

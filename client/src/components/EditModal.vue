@@ -55,7 +55,7 @@ export default defineComponent({
         };
 
         await store.dispatch('updateTask', payload);
-        emit('close-popup');
+        emit('close');
       } catch (error) {
         console.log(error);
       }

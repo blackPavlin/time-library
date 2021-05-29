@@ -14,7 +14,7 @@ export type Task = {
   user?: string;
   title: string;
   description: string;
-  whatWatch: 'Film' | 'Serial';
+  whatWatch: 'film' | 'serial';
   time: number;
   tags: string[];
   completed: boolean;
@@ -63,8 +63,8 @@ const actions: ActionTree<RootState, RootState> = {
     commit('clearToken');
   },
   async getTasks({ commit }): Promise<void> {
-    const response = await client.get<Task[]>('/task');
-    commit('setTasks', response.data);
+    const response = await client.get<{ tasks: Task[] }>('/task');
+    commit('setTasks', response.data.tasks);
   },
   async createTask({ commit }, payload: Task): Promise<void> {
     await client.post<Task>('/task', payload);

@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const config = {
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://localhost/api',
   timeout: 5000,
 };
 

@@ -72,7 +72,7 @@ export default defineComponent({
     align-items: center;
     margin-bottom: 30px;
 
-    & .ui-title-1 {
+    & .ui-title-2 {
       margin-bottom: 0px;
     }
   }

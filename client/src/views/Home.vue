@@ -25,7 +25,7 @@
           class="what-watch--radio"
           type="radio"
           id="radioFilm"
-          value="Film"
+          value="film"
           v-model="whatWatch"
         >
         <label for="radioFilm">Film</label>
@@ -33,7 +33,7 @@
           class="what-watch--radio"
           type="radio"
           id="radioSerial"
-          value="Serial"
+          value="serial"
           v-model="whatWatch"
         >
         <label for="radioSerial">Serial</label>
@@ -41,7 +41,7 @@
       <div class="total-time">
         <div
           class="total-time__film"
-          v-if="whatWatch === 'Film'"
+          v-if="whatWatch === 'film'"
         >
           <span class="time-title">Hours</span>
           <input
@@ -61,7 +61,7 @@
         </div>
         <div
           class="total-time__serial"
-          v-if="whatWatch === 'Serial'"
+          v-if="whatWatch === 'serial'"
         >
           <span class="time-title">How many season?</span>
           <input
@@ -154,7 +154,7 @@ export default defineComponent({
   setup() {
     const title = ref('');
     const description = ref('');
-    const whatWatch = ref<'Film'|'Serial'>('Film');
+    const whatWatch = ref<'film'|'serial'>('film');
     const filmHours = ref(1);
     const filmMinutes = ref(30);
     const serialSeason = ref(1);
@@ -191,7 +191,7 @@ export default defineComponent({
           title: title.value,
           description: description.value,
           whatWatch: whatWatch.value,
-          time: (whatWatch.value === 'Film') ? filmTime.value : serialTime.value,
+          time: (whatWatch.value === 'film') ? filmTime.value : serialTime.value,
           tags: tags.value.map((tag) => tag.title),
           completed: false,
         };
@@ -200,7 +200,7 @@ export default defineComponent({
 
         title.value = '';
         description.value = '';
-        whatWatch.value = 'Film';
+        whatWatch.value = 'film';
         tags.value = [];
         filmHours.value = 1;
         filmMinutes.value = 30;
@@ -268,6 +268,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+  .home {
+    & .ui-title-2 {
+      margin-bottom: 0;
+    }
+  }
+
   .form-item {
     .error {
       display: none;

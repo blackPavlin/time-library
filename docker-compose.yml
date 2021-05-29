@@ -1,0 +1,28 @@
+version: "3.1"
+
+services:
+    apiserver:
+        container_name: apiserver
+        restart: always
+        build: ./server
+        # ports:
+        #     - 3000:3000
+        depends_on: 
+            - mongo
+    webserver:
+        container_name: webserver
+        restart: unless-stopped
+        build: ./client
+        volumes:
+            - ./.nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+        ports:
+            - 80:80
+            - 443:443
+        depends_on:
+            - apiserver
+    mongo:
+        container_name: mongo
+        restart: unless-stopped
+        image: mongo:latest
+        ports: 
+            - 27017:27017

@@ -24,7 +24,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Logout.vue'),
     meta: {
       title: 'Logout',
-      requiresAuth: true,
     },
   },
   {
@@ -51,6 +50,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Tacks',
       requiresAuth: true,
+    },
+  },
+  {
+    path: '/*',
+    name: 'NotFound',
+    component: () => import('@/views/NotFound.vue'),
+    meta: {
+      title: 'NotFound',
     },
   },
 ];
