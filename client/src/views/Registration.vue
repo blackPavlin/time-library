@@ -3,16 +3,19 @@
     <div class="registration__banner"></div>
     <div class="registration__form">
       <span class="ui-title-2">Registration</span>
-      <form @submit.prevent="onSubmit">
+      <form
+        @submit.prevent="onSubmit"
+        @keypress.enter.prevent="onSubmit"
+      >
         <div class="form-item" :class="{ errorInput: v.login.$error }">
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email address"
             v-model="login"
             :class="{ error: v.login.$error }"
             @change="v.login.$touch()"
           >
-          <p class="error" v-for="(error, index) of v.login.$errors" :key="index">
+          <p class="error" v-for="error of v.login.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
         </div>
@@ -24,7 +27,7 @@
             :class="{ error: v.password.$error }"
             @change="v.password.$touch()"
           >
-          <p class="error" v-for="(error, index) of v.password.$errors" :key="index">
+          <p class="error" v-for="error of v.password.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
         </div>
@@ -36,7 +39,7 @@
             :class="{ error: v.confirmPassword.$error }"
             @change="v.confirmPassword.$touch()"
           >
-          <p class="error" v-for="(error, index) of v.confirmPassword.$errors" :key="index">
+          <p class="error" v-for="error of v.confirmPassword.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
         </div>
@@ -48,17 +51,6 @@
           >
             Registration
           </button>
-          <div class="buttons-list buttons-list--info">
-            <p class="typo__p" v-if="submitStatus === 'OK'">
-              Thanks for your submission!
-            </p>
-            <p class="typo__p" v-if="submitStatus === 'ERROR'">
-              Please fill the form correctly
-            </p>
-            <p class="typo__p" v-if="submitStatus === 'PENDING'">
-              Sending...
-            </p>
-          </div>
           <div class="buttons-list buttons-list--info">
             <span>Do you have account?</span>
             <router-link to="/login">  Enter Here</router-link>
@@ -87,9 +79,6 @@ export default defineComponent({
     const login = ref('');
     const password = ref('');
     const confirmPassword = ref('');
-    const submitStatus = ref('');
-
-    const router = useRouter();
 
     const rules = {
       login: { required, email },
@@ -97,27 +86,25 @@ export default defineComponent({
       confirmPassword: { sameAs: sameAs(password, 'password') },
     };
 
+    const router = useRouter();
     const v = useVuelidate(rules, { login, password, confirmPassword });
 
     const onSubmit = async (): Promise<void> => {
-      try {
-        v.value.$touch();
-        if (v.value.$invalid) {
-          return;
-        }
+      v.value.$touch();
+      if (v.value.$invalid) {
+        return;
+      }
 
+      try {
         const payload = {
           login: login.value,
           password: password.value,
         };
 
-        submitStatus.value = 'PENDING';
         await store.dispatch('signup', payload);
         await store.dispatch('login', payload);
-        submitStatus.value = 'OK';
         router.push('/home');
       } catch (error) {
-        submitStatus.value = 'ERROR';
         console.error(error);
       }
     };
@@ -126,7 +113,6 @@ export default defineComponent({
       login,
       password,
       confirmPassword,
-      submitStatus,
       onSubmit,
       v,
     };

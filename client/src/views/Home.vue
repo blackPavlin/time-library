@@ -10,7 +10,7 @@
           @change="v.title.$touch()"
           :class="{ error: v.title.$error }"
         >
-        <p class="error" v-for="(error, index) of v.title.$errors" :key="index">
+        <p class="error" v-for="error of v.title.$errors" :key="error.$uid">
           {{ error.$message }}
         </p>
       </div>
@@ -181,12 +181,12 @@ export default defineComponent({
     });
 
     const onSubmit = async (): Promise<void> => {
-      try {
-        v.value.$touch();
-        if (v.value.$invalid) {
-          return;
-        }
+      v.value.$touch();
+      if (v.value.$invalid) {
+        return;
+      }
 
+      try {
         const payload: Task = {
           title: title.value,
           description: description.value,

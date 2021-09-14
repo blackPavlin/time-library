@@ -54,7 +54,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .header-logo {
   color: #333;
-  font-size: 1.333333333333333rem;
+  font-size: 1.33rem;
   white-space: nowrap;
 }
 

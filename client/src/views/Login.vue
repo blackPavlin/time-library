@@ -3,16 +3,19 @@
         <div class="auth__banner"></div>
         <div class="auth__form">
             <span class="ui-title-2">Login</span>
-            <form @submit.prevent="onSubmit">
+            <form
+              @submit.prevent="onSubmit"
+              @keypress.enter.prevent="onSubmit"
+            >
               <div class="form-item" :class="{ errorInput: v.login.$error }">
                 <input
                   type="email"
-                  placeholder="Login"
-                  v-model="login"
+                  placeholder="Email address"
+                  v-model="state.login"
                   :class="{ error: v.login.$error }"
                   @change="v.login.$touch()"
                 >
-                <p class="error" v-for="(error, index) of v.login.$errors" :key="index">
+                <p class="error" v-for="error of v.login.$errors" :key="error.$uid">
                   {{ error.$message }}
                 </p>
               </div>
@@ -20,11 +23,11 @@
                 <input
                   type="password"
                   placeholder="Password"
-                  v-model="password"
+                  v-model="state.password"
                   :class="{ error: v.password.$error }"
                   @change="v.password.$touch()"
                 >
-                <p class="error" v-for="(error, index) of v.password.$errors" :key="index">
+                <p class="error" v-for="error of v.password.$errors" :key="error.$uid">
                   {{ error.$message }}
                 </p>
               </div>
@@ -37,17 +40,6 @@
                     Login
                 </button>
                 <div class="buttons-list buttons-list--info">
-                  <p class="typo__p" v-if="submitStatus === 'OK'">
-                    Thanks for your submission!
-                  </p>
-                  <p class="typo__p" v-if="submitStatus === 'ERROR'">
-                    Please fill the form correctly
-                  </p>
-                  <p class="typo__p" v-if="submitStatus === 'PENDING'">
-                    Sending...
-                  </p>
-                </div>
-                <div class="buttons-list buttons-list--info">
                   <span>Do you need account?</span>
                   <router-link to="/registration">  Enter Here</router-link>
                </div>
@@ -58,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
@@ -67,47 +59,35 @@ import store from '@/store';
 export default defineComponent({
   name: 'Login',
   setup() {
-    const login = ref('');
-    const password = ref('');
-    const submitStatus = ref('');
-
-    const router = useRouter();
+    const state = reactive({
+      login: '',
+      password: '',
+    });
 
     const rules = {
       login: { required, email },
       password: { required },
     };
 
-    const v = useVuelidate(rules, { login, password });
+    const router = useRouter();
+    const v = useVuelidate(rules, state);
 
     const onSubmit = async (): Promise<void> => {
+      v.value.$touch();
+      if (v.value.$invalid) {
+        return;
+      }
+
       try {
-        v.value.$touch();
-        if (v.value.$invalid) {
-          return;
-        }
-
-        const payload = {
-          login: login.value,
-          password: password.value,
-        };
-
-        submitStatus.value = 'PENDING';
-
-        await store.dispatch('login', payload);
-
-        submitStatus.value = 'OK';
+        await store.dispatch('login', state);
         router.push('/home');
       } catch (error) {
-        submitStatus.value = 'ERROR';
         console.error(error);
       }
     };
 
     return {
-      login,
-      password,
-      submitStatus,
+      state,
       onSubmit,
       v,
     };
