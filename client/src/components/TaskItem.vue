@@ -11,7 +11,10 @@
           <div class="task-item__main-info">
             <span
               class="ui-label"
-              :class="[{'ui-label--primary': !task.completed}, {'ui-label--light': task.completed}]"
+              :class="[
+                { 'ui-label--primary': !task.completed },
+                { 'ui-label--light': task.completed },
+              ]"
             >
               {{ task.whatWatch }}
             </span>
@@ -20,49 +23,45 @@
           <span class="button-close" @click="startDeleteTask(task._id, task.title)"></span>
         </div>
         <div class="task-item__content">
-            <div class="task-item__header">
-              <div class="ui-checkbox-wrapper">
-                <input
-                  class="ui-checkbox"
-                  type="checkbox"
-                  v-model="task.completed"
-                  @click="completeTask(task._id, task.completed)"
-                >
-              </div>
-              <span class="ui-title-2"> {{ task.title }} </span>
+          <div class="task-item__header">
+            <div class="ui-checkbox-wrapper">
+              <input
+                class="ui-checkbox"
+                type="checkbox"
+                v-model="task.completed"
+                @click="completeTask(task._id, task.completed)"
+              />
             </div>
-            <div class="task-item__body">
-              <p class="ui-text-regular"> {{ task.description }} </p>
-            </div>
-            <div class="task-item__footer">
-              <div class="tag-list">
-                <div
-                  class="ui-tag__wrapper"
-                  v-for="tag in task.tags"
-                  :key="tag"
-                >
-                  <div class="ui-tag">
-                    <span class="tag-title"> {{ tag }} </span>
-                  </div>
-                </div>
-              </div>
-              <div class="buttons-list">
-                <div
-                  class="button button--round button-default"
-                  @click="startEditTask(task._id, task.title, task.description)"
-                >
-                  Edit
-                </div>
-                <div
-                  class="button button--round"
-                  :class="[{'button-primary': !task.completed}, {'button-light': task.completed}]"
-                  @click="completeTask(task._id, task.completed)"
-                >
-                  <span v-if="task.completed">Return</span>
-                  <span v-else>Done</span>
+            <span class="ui-title-2"> {{ task.title }} </span>
+          </div>
+          <div class="task-item__body">
+            <p class="ui-text-regular">{{ task.description }}</p>
+          </div>
+          <div class="task-item__footer">
+            <div class="tag-list">
+              <div class="ui-tag__wrapper" v-for="tag in task.tags" :key="tag">
+                <div class="ui-tag">
+                  <span class="tag-title"> {{ tag }} </span>
                 </div>
               </div>
             </div>
+            <div class="buttons-list">
+              <div
+                class="button button--round button-default"
+                @click="startEditTask(task._id, task.title, task.description)"
+              >
+                Edit
+              </div>
+              <div
+                class="button button--round"
+                :class="[{ 'button-primary': !task.completed }, { 'button-light': task.completed }]"
+                @click="completeTask(task._id, task.completed)"
+              >
+                <span v-if="task.completed">Return</span>
+                <span v-else>Done</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -134,14 +133,11 @@ export default defineComponent({
 
         await store.dispatch('updateTask', payload);
       } catch (error) {
-        console.error(error);
+        await store.dispatch('showErrorMessage', error);
       }
     };
 
-    const startDeleteTask = (
-      taskID: string,
-      title: string,
-    ): void => {
+    const startDeleteTask = (taskID: string, title: string): void => {
       showDeletePopup.value = true;
 
       deleteTaskID.value = taskID;
@@ -155,11 +151,7 @@ export default defineComponent({
       deleteTitle.value = '';
     };
 
-    const startEditTask = (
-      taskID: string,
-      title: string,
-      description: string,
-    ): void => {
+    const startEditTask = (taskID: string, title: string, description: string): void => {
       showEditPopup.value = true;
 
       editTaskID.value = taskID;
@@ -196,72 +188,74 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .task-item {
-    margin-bottom: 20px;
+.task-item {
+  margin-bottom: 20px;
 
-    & .ui-checkbox:checked:before {
-      border-color: #909399;
-    }
+  & .ui-checkbox:checked:before {
+    border-color: #909399;
+  }
 
-    &.completed {
-      .ui-title-2, .ui-text-regular, .ui-tag {
-        text-decoration: line-through;
-        color: #909399;
-      }
-    }
-
-    &:last-child {
-      margin-bottom: 0px;
+  &.completed {
+    .ui-title-2,
+    .ui-text-regular,
+    .ui-tag {
+      text-decoration: line-through;
+      color: #909399;
     }
   }
 
-  .task-item__info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0px;
+  }
+}
 
-    & .button-close {
-      width: 20px;
-      height: 20px;
-    }
+.ui-tag__wrapper:not(:first-child) {
+  margin-left: 5px;
+}
 
-    & .ui-label {
-      margin-right: 8px;
-    }
+.task-item__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  & .button-close {
+    width: 20px;
+    height: 20px;
   }
 
-  .task-item__header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 18px;
+  & .ui-label {
+    margin-right: 8px;
+  }
+}
 
-    & .ui-checkbox-wrapper {
-      margin-right: 8px;
-    }
+.task-item__header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
 
-    & .ui-title-2 {
-      margin-bottom: 6px;
-    }
+  & .ui-checkbox-wrapper {
+    margin-right: 8px;
   }
 
-  .task-item__body {
-    margin-bottom: 20px;
+  & .ui-title-2 {
+    margin-bottom: 6px;
   }
+}
 
-  .buttons-list {
-    .button {
-      margin-right: 12px;
-    }
+.task-item__body {
+  margin-bottom: 20px;
+}
 
-    .button:last-child {
-      margin-right: 0;
-    }
+.buttons-list {
+  .button:not(:last-child) {
+    margin-right: 12px;
   }
+}
 
-  .task-item__footer {
-    & .buttons-list {
-      text-align: right;
-    }
+.task-item__footer {
+  & .buttons-list {
+    text-align: right;
   }
+}
 </style>

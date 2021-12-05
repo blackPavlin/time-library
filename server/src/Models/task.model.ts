@@ -4,13 +4,13 @@ export interface Task extends Document {
 	user: string;
 	title: string;
 	description: string;
-	whatWatch: 'Film' | 'Serial';
+	whatWatch: 'film' | 'serial';
 	time: number;
 	tags: string[];
 	completed: boolean;
 }
 
-const taskSchema = new Schema(
+const taskSchema = new Schema<Task>(
 	{
 		user: {
 			type: String,
@@ -22,7 +22,6 @@ const taskSchema = new Schema(
 		},
 		description: {
 			type: String,
-			required: true,
 		},
 		whatWatch: {
 			type: String,

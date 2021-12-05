@@ -44,7 +44,7 @@ export const GetTaskSchema = {
 export const CreateTaskSchema = {
 	body: {
 		type: 'object',
-		required: ['title', 'description', 'whatWatch', 'time', 'tags', 'completed'],
+		required: ['title', 'whatWatch', 'time', 'tags', 'completed'],
 		properties: {
 			title: { type: 'string' },
 			description: { type: 'string' },

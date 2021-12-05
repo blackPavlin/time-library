@@ -5,12 +5,7 @@ void (async function (): Promise<void> {
 	try {
 		await server.ready();
 
-		await mongoose.connect(server.config.MONGO_URL, {
-			useUnifiedTopology: true,
-			useNewUrlParser: true,
-			useCreateIndex: true,
-		});
-
+		await mongoose.connect(server.config.MONGO_URL);
 		await server.listen(server.config.PORT, server.config.HOST);
 	} catch (error) {
 		console.log(error);

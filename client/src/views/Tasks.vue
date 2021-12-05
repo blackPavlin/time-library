@@ -22,12 +22,12 @@
           :class="{ active: filter === 'all' }"
           @click="filter = 'all'"
         >
-        All
+          All
         </div>
       </div>
     </div>
     <div class="task-list">
-      <task-item :filter="filter"/>
+      <task-item :filter="filter" />
     </div>
   </div>
 </template>
@@ -52,53 +52,53 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .task-item__header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 18px;
+.task-item__header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
 
-    & .ui-checkbox-wrapper {
-      margin-right: 8px;
-    }
-
-    & .ui-title-2 {
-      margin-bottom: 6px;
-    }
+  & .ui-checkbox-wrapper {
+    margin-right: 8px;
   }
 
-  .task-list__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-
-    & .ui-title-2 {
-      margin-bottom: 0px;
-    }
+  & .ui-title-2 {
+    margin-bottom: 6px;
   }
+}
 
-  .buttons-list {
-    .button {
-      margin-right: 12px;
+.task-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
 
-      &:last-child {
-        margin-right: 0;
-      }
-
-      &.active {
-        background-color: #444ce0;
-        color: #fff;
-      }
-    }
+  & .ui-title-2 {
+    margin-bottom: 0px;
   }
+}
 
-  .ui-messageBox__wrapper {
+.buttons-list {
+  .button {
+    margin-right: 12px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
     &.active {
-      display: flex;
-    }
-
-    .button-light {
-      margin-right: 8px;
+      background-color: #444ce0;
+      color: #fff;
     }
   }
+}
+
+.ui-messageBox__wrapper {
+  &.active {
+    display: flex;
+  }
+
+  .button-light {
+    margin-right: 8px;
+  }
+}
 </style>

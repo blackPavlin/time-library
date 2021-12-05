@@ -3,23 +3,14 @@
     <div class="ui-messageBox fadeInDown">
       <div class="ui-messageBox__header">
         <span class="messageBox-title">Delete - {{ title }}</span>
-        <span
-          class="button-close ui-messageBox-close"
-          @click="$emit('close')"
-        ></span>
+        <span class="button-close ui-messageBox-close" @click="$emit('close')"></span>
       </div>
       <div class="ui-messageBox__content">
         <span>Are you sure?</span>
       </div>
       <div class="ui-messageBox__footer">
-        <div
-          class="button button-light ui-messageBox-cancel"
-          @click="$emit('close')"
-        >Cancel</div>
-        <div
-          class="button button-primary ui-messageBox-ok"
-          @click="removeTask()"
-        >OK</div>
+        <div class="button button-light ui-messageBox-cancel" @click="$emit('close')">Cancel</div>
+        <div class="button button-primary ui-messageBox-ok" @click="removeTask()">OK</div>
       </div>
     </div>
   </div>
@@ -41,7 +32,7 @@ export default defineComponent({
         await store.dispatch('removeTask', props.taskID);
         emit('close');
       } catch (error) {
-        console.error(error);
+        await store.dispatch('showErrorMessage', error);
       }
     };
 
@@ -53,17 +44,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .ui-messageBox__wrapper {
-    display: flex;
+.ui-messageBox__wrapper {
+  display: flex;
 
-    .button-light {
-      margin-right: 8px;
-    }
+  .button-light {
+    margin-right: 8px;
   }
+}
 
-  .ui-messageBox__content {
-    p {
-      margin-bottom: .5rem;
-    }
+.ui-messageBox__content {
+  p {
+    margin-bottom: 0.5rem;
   }
+}
 </style>

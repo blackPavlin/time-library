@@ -24,18 +24,21 @@ export default (
 
 			const user = await Users.findOne({ login }).select({ login: 1, password: 1 }).lean();
 			if (!user) {
-				throw server.httpErrors.unauthorized('Неверный логин или пароль');
+				throw server.httpErrors.unauthorized('Incorrect login or password');
 			}
 
 			if (!bcrypt.compareSync(password, user.password)) {
-				throw server.httpErrors.unauthorized('Неверный логин или пароль');
+				throw server.httpErrors.unauthorized('Incorrect login or password');
 			}
 
 			const tokenData: TokenData = {
 				login: user.login,
 			};
 
-			const token = jwt.sign(tokenData, server.config.SECRET_KEY, { expiresIn: 60 * 60 });
+			const token = jwt.sign(tokenData, server.config.SECRET_KEY, {
+				expiresIn: 60 * 60,
+				algorithm: 'HS256',
+			});
 
 			reply.code(200).send({ token });
 		},
@@ -50,7 +53,7 @@ export default (
 
 			const user = await Users.findOne({ login }).select({ login: 1 }).lean();
 			if (user) {
-				throw server.httpErrors.conflict('Такой пользователь уже существует');
+				throw server.httpErrors.conflict('User already exists');
 			}
 
 			await Users.create({
@@ -58,7 +61,7 @@ export default (
 				password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
 			});
 
-			reply.code(201).send({ message: 'Пользователь успешно создан' });
+			reply.code(201).send({ message: 'User created successfully' });
 		},
 	);
 

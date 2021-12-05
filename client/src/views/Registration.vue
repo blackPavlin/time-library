@@ -1,12 +1,11 @@
 <template>
   <div class="registration">
-    <div class="registration__banner"></div>
+    <div class="registration__banner">
+      <banner />
+    </div>
     <div class="registration__form">
       <span class="ui-title-2">Registration</span>
-      <form
-        @submit.prevent="onSubmit"
-        @keypress.enter.prevent="onSubmit"
-      >
+      <form @submit.prevent="onSubmit" @keypress.enter.prevent="onSubmit">
         <div class="form-item" :class="{ errorInput: v.login.$error }">
           <input
             type="email"
@@ -14,19 +13,19 @@
             v-model="login"
             :class="{ error: v.login.$error }"
             @change="v.login.$touch()"
-          >
+          />
           <p class="error" v-for="error of v.login.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
         </div>
-        <div class="form-item" :class="{ errorInput: v.password.$error}">
+        <div class="form-item" :class="{ errorInput: v.password.$error }">
           <input
             type="password"
             placeholder="Password"
             v-model="password"
             :class="{ error: v.password.$error }"
             @change="v.password.$touch()"
-          >
+          />
           <p class="error" v-for="error of v.password.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
@@ -38,7 +37,7 @@
             v-model="confirmPassword"
             :class="{ error: v.confirmPassword.$error }"
             @change="v.confirmPassword.$touch()"
-          >
+          />
           <p class="error" v-for="error of v.confirmPassword.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
@@ -53,7 +52,7 @@
           </button>
           <div class="buttons-list buttons-list--info">
             <span>Do you have account?</span>
-            <router-link to="/login">  Enter Here</router-link>
+            <router-link to="/login"> Enter Here</router-link>
           </div>
         </div>
       </form>
@@ -65,16 +64,15 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVuelidate } from '@vuelidate/core';
-import {
-  required,
-  email,
-  minLength,
-  sameAs,
-} from '@vuelidate/validators';
+import { required, email, minLength, sameAs } from '@vuelidate/validators';
 import store from '@/store';
+import Banner from '@/components/Banner.vue';
 
 export default defineComponent({
   name: 'Registration',
+  components: {
+    Banner,
+  },
   setup() {
     const login = ref('');
     const password = ref('');
@@ -105,7 +103,7 @@ export default defineComponent({
         await store.dispatch('login', payload);
         router.push('/home');
       } catch (error) {
-        console.error(error);
+        await store.dispatch('showErrorMessage', error);
       }
     };
 
@@ -121,67 +119,67 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.registration {
+  display: flex;
+}
+
+.registration__banner,
+.registration__form {
+  width: 50%;
+}
+
+@media screen and (max-width: 480px) {
   .registration {
-    display: flex;
+    flex-direction: column-reverse;
   }
 
   .registration__banner,
   .registration__form {
-    width: 50%;
-  }
+    width: 100%;
+    margin-bottom: 30px;
 
-  @media screen and (max-width: 480px) {
-    .auth {
-      flex-direction: column-reverse;
-    }
-
-    .auth__banner,
-    .auth__form {
-      width: 100%;
-      margin-bottom: 30px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
+    &:last-child {
+      margin-bottom: 0;
     }
   }
+}
 
-  .form-item {
+.form-item {
+  .error {
+    display: none;
+    margin-bottom: 8px;
+    font-size: 13.4px;
+    color: #fc5c65;
+  }
+
+  &.errorInput {
     .error {
-      display: none;
-      margin-bottom: 8px;
-      font-size: 13.4px;
-      color: #fc5c65;
-    }
-
-    &.errorInput {
-      .error {
-        display: block;
-      }
+      display: block;
     }
   }
+}
 
-  input {
-    &.error {
-      border-color: #fc5c65;
-      animation: shake .3s;
+input {
+  &.error {
+    border-color: #fc5c65;
+    animation: shake 0.3s;
+  }
+}
+
+.buttons-list {
+  text-align: right;
+  margin-bottom: 20px;
+
+  &.buttons-list--info {
+    text-align: center;
+
+    &:last-child {
+      margin-bottom: 0;
     }
   }
+}
 
-  .buttons-list {
-    text-align: right;
-    margin-bottom: 20px;
-
-    &.buttons-list--info {
-      text-align: center;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-  }
-
-  a {
-    color: #444ce0;
-  }
+a {
+  color: #444ce0;
+}
 </style>

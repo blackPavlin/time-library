@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import store from '@/store';
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Main',
@@ -53,7 +53,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/*',
+    path: '/:catchAll(.*)',
     name: 'NotFound',
     component: () => import('@/views/NotFound.vue'),
     meta: {

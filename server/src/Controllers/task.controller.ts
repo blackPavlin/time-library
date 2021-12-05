@@ -30,9 +30,9 @@ export default (
 		{ schema: CreateTaskSchema, preHandler: server.auth([server.verifyJWT]) },
 		async (request, reply) => {
 			const login = request.user.login;
-			const createdTask = await Tasks.create({ ...request.body, user: login });
+			const task = await Tasks.create({ ...request.body, user: login });
 
-			reply.code(201).send({ task: createdTask });
+			reply.code(201).send({ task });
 		},
 	);
 
@@ -47,16 +47,16 @@ export default (
 			const id = request.params.id;
 			const updates = request.body;
 
-			const updatedTask = await Tasks.findOneAndUpdate({ _id: id, user: login }, updates, {
+			const task = await Tasks.findOneAndUpdate({ _id: id, user: login }, updates, {
 				new: true,
 				lean: true,
 			});
 
-			if (!updatedTask) {
+			if (!task) {
 				throw server.httpErrors.notFound('Task not found');
 			}
 
-			reply.code(204).send({ task: updatedTask });
+			reply.code(204).send({ task });
 		},
 	);
 

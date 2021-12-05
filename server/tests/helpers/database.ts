@@ -6,11 +6,7 @@ const mongod = new MongoMemoryServer();
 export const connect = async (): Promise<void> => {
 	const databaseURI = await mongod.getUri();
 
-	await mongoose.connect(databaseURI, {
-		useUnifiedTopology: true,
-		useNewUrlParser: true,
-		useCreateIndex: true,
-	});
+	await mongoose.connect(databaseURI);
 };
 
 export const closeDatabase = async (): Promise<void> => {

@@ -1,23 +1,43 @@
-/* eslint-disable no-param-reassign */
 import axios from 'axios';
 
-const config = {
+const client = axios.create({
   baseURL: 'http://localhost/api',
   timeout: 5000,
-};
-
-const client = axios.create(config);
+});
 
 client.interceptors.request.use(
-  (request) => {
-    if (!!localStorage.getItem('token') && !request.headers.common.Authorization) {
-      const token = localStorage.getItem('token');
-      request.headers.Authorization = `Bearer ${token}`;
+  (config) => {
+    if (config?.headers?.Authorization) {
+      return config;
     }
 
-    return request;
+    const token = localStorage.getItem('token');
+
+    return {
+      ...config,
+      headers: {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    };
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error.message)
+);
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error?.response?.status === 401 ||
+      error?.response?.status === 404 ||
+      error?.response?.status === 409 ||
+      error?.response?.status === 500
+    ) {
+      return Promise.reject(error.response.data);
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 export default client;

@@ -11,12 +11,14 @@ import authController from './Controllers/auth.controller';
 import taskController from './Controllers/task.controller';
 
 const server = fastify({
-	logger: true,
+	logger: {
+		level: 'error',
+	},
 	ignoreTrailingSlash: true,
 });
 
 server
-	.register(fastifyCors, { origin: true, methods: ['GET', 'POST'] })
+	.register(fastifyCors, { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] })
 	.register(fastifySensible)
 	.register(fastifyAuth)
 	.register(fastifyEnv, {

@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="ui-messageBox__wrapper"
-    @click="$emit('close')"
-  >
+  <div class="ui-messageBox__wrapper" @click="$emit('close')">
     <div class="ui-messageBox fadeInDown" @click.stop="">
       <div class="ui-messageBox__header">
         <span class="messageBox-title">{{ title }}</span>
@@ -10,16 +7,9 @@
       </div>
       <div class="ui-messageBox__content">
         <p>Title</p>
-        <input
-          type="text"
-          v-model="editingTitle"
-          @keyup.esc="$emit('close')"
-        >
+        <input type="text" v-model="editingTitle" @keyup.esc="$emit('close')" />
         <p>Description</p>
-        <textarea
-          v-model='editingDescription'
-          @keyup.esc="$emit('close')"
-        ></textarea>
+        <textarea v-model="editingDescription" @keyup.esc="$emit('close')"></textarea>
       </div>
       <div class="ui-messageBox__footer">
         <button class="button button-light" @click="$emit('close')">Cancel</button>
@@ -57,7 +47,7 @@ export default defineComponent({
         await store.dispatch('updateTask', payload);
         emit('close');
       } catch (error) {
-        console.log(error);
+        await store.dispatch('showErrorMessage', error);
       }
     };
 
@@ -71,17 +61,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-  .ui-messageBox__wrapper {
-    display: flex;
+.ui-messageBox__wrapper {
+  display: flex;
 
-    .button-light {
-      margin-right: 8px;
-    }
+  .button-light {
+    margin-right: 8px;
   }
+}
 
-  .ui-messageBox__content {
-    p {
-      margin-bottom: .5rem;
-    }
+.ui-messageBox__content {
+  p {
+    margin-bottom: 0.5rem;
   }
+}
 </style>

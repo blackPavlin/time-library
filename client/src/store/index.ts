@@ -1,13 +1,6 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  createStore,
-  MutationTree,
-  ActionTree,
-  GetterTree,
-} from 'vuex';
-import client from '../plugins/axios';
+import { createStore, MutationTree, ActionTree, GetterTree } from 'vuex';
+import client from '@/plugins/axios';
 
 export type Task = {
   _id?: string;
@@ -18,23 +11,31 @@ export type Task = {
   time: number;
   tags: string[];
   completed: boolean;
-}
+};
 
 interface RootState {
   token: string;
   tasks: Task[];
+  messageShow: boolean;
+  messageTitle: string;
+  messageContext: 'success' | 'error';
 }
 
-export type UpdateTask = {
-  title: string;
-  description: string;
-} | {
-  completed: boolean
-}
+export type UpdateTask =
+  | {
+      title: string;
+      description: string;
+    }
+  | {
+      completed: boolean;
+    };
 
 const state: RootState = {
   token: localStorage.getItem('token') || '',
   tasks: [],
+  messageShow: false,
+  messageTitle: '',
+  messageContext: 'success',
 };
 
 const mutations: MutationTree<RootState> = {
@@ -46,6 +47,16 @@ const mutations: MutationTree<RootState> = {
   },
   setTasks(store, tasks: Task[]): void {
     store.tasks = tasks;
+  },
+  setMessage(store, payload: { message: string; context: 'success' | 'error' }): void {
+    store.messageShow = true;
+    store.messageTitle = payload.message;
+    store.messageContext = payload.context;
+  },
+  clearMessage(store): void {
+    store.messageShow = false;
+    store.messageTitle = '';
+    store.messageContext = 'success';
   },
 };
 
@@ -77,6 +88,25 @@ const actions: ActionTree<RootState, RootState> = {
     await client.delete<Task>(`/task/${taskID}`);
     await dispatch('getTasks');
   },
+  showMessage({ commit }, payload: { message: string; context: 'success' | 'error' }): void {
+    commit('setMessage', payload);
+
+    setTimeout(() => {
+      commit('clearMessage');
+    }, 5000);
+  },
+  showSucessMessage({ dispatch }, message: string): void {
+    dispatch('showMessage', {
+      message,
+      context: 'success',
+    });
+  },
+  showErrorMessage({ dispatch }, error: Error): void {
+    dispatch('showMessage', {
+      message: error?.message ?? '',
+      context: 'error',
+    });
+  },
 };
 
 const getters: GetterTree<RootState, RootState> = {
@@ -85,6 +115,9 @@ const getters: GetterTree<RootState, RootState> = {
   getTasks: ({ tasks }): Task[] => tasks,
   getActiveTasks: ({ tasks }): Task[] => tasks.filter((task) => !task.completed),
   getCompletedTasks: ({ tasks }): Task[] => tasks.filter((task) => task.completed),
+  messageShow: ({ messageShow }): boolean => messageShow,
+  messageTitle: ({ messageTitle }): string => messageTitle,
+  messageContext: ({ messageContext }): 'success' | 'error' => messageContext,
 };
 
 export default createStore<RootState>({
