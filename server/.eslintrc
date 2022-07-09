@@ -15,12 +15,18 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./tsconfig.eslint.json",
+        "project": "./tsconfig.json",
         "tsconfigRootDir": "."
     },
-    "plugins": ["@typescript-eslint", "prettier", "jest"],
-    "ignorePatterns": ["node_modules/*", "dist/*","*.js"],
+    "plugins": [
+        "@typescript-eslint",
+        "prettier",
+        "jest"
+    ],
+    "ignorePatterns": ["*.js"],
     "rules": {
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/unbound-method": "off",
         "prettier/prettier": [
             "error",
             {
@@ -29,11 +35,6 @@
                 "printWidth": 100,
                 "useTabs": true
             }
-        ],
-        "arrow-body-style": "off",
-        "prefer-arrow-callback": "off",
-        "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/no-unsafe-assignment": "off"
+        ]
     }
 }

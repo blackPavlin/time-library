@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createStore, MutationTree, ActionTree, GetterTree } from 'vuex';
 import client from '@/plugins/axios';
 

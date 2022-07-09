@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
-import server from './server';
+import { config } from './config/config';
+import { server } from './server';
 
-void (async function (): Promise<void> {
+void (async function main(): Promise<void> {
 	try {
-		await server.ready();
-
-		await mongoose.connect(server.config.MONGO_URL);
-		await server.listen(server.config.PORT, server.config.HOST);
+		await mongoose.connect(config.MONGO_URL);
+		await server.listen({ host: config.HOST, port: config.PORT });
 	} catch (error) {
 		console.log(error);
 	}

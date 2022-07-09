@@ -6,7 +6,7 @@
         <input
           type="text"
           placeholder="What we will watch?"
-          v-model="title"
+          v-model="form.title"
           @change="v.title.$touch()"
           :class="{ error: v.title.$error }"
         />
@@ -15,7 +15,7 @@
         </p>
       </div>
       <div class="form-item">
-        <textarea v-model="description" @keyup.enter="newTask"></textarea>
+        <textarea v-model="form.description" @keyup.enter="onSubmit"></textarea>
       </div>
       <div class="options-list">
         <input
@@ -23,7 +23,7 @@
           type="radio"
           id="radioFilm"
           value="film"
-          v-model="whatWatch"
+          v-model="form.whatWatch"
         />
         <label for="radioFilm">Film</label>
         <input
@@ -31,25 +31,25 @@
           type="radio"
           id="radioSerial"
           value="serial"
-          v-model="whatWatch"
+          v-model="form.whatWatch"
         />
         <label for="radioSerial">Serial</label>
       </div>
       <div class="total-time">
-        <div class="total-time__film" v-if="whatWatch === 'film'">
+        <div class="total-time__film" v-if="form.whatWatch === 'film'">
           <span class="time-title">Hours</span>
-          <input class="time-input" type="number" v-model="filmHours" min="0" />
+          <input class="time-input" type="number" v-model="form.filmHours" min="0" />
           <span class="time-title">Minutes</span>
-          <input class="time-input" type="number" v-model="filmMinutes" min="0" />
+          <input class="time-input" type="number" v-model="form.filmMinutes" min="0" />
           <p>{{ getHoursAndMinutes(filmTime) }}</p>
         </div>
-        <div class="total-time__serial" v-if="whatWatch === 'serial'">
+        <div class="total-time__serial" v-else>
           <span class="time-title">How many season?</span>
-          <input class="time-input" type="number" v-model="serialSeason" min="0" />
+          <input class="time-input" type="number" v-model="form.serialSeason" min="0" />
           <span class="time-title">How many series?</span>
-          <input class="time-input" type="number" v-model="serialSeries" min="0" />
+          <input class="time-input" type="number" v-model="form.serialSeries" min="0" />
           <span class="time-title">How long is one series? (minutes)</span>
-          <input class="time-input" type="number" v-model="serialSeriesMinutes" min="0" />
+          <input class="time-input" type="number" v-model="form.serialSeriesMinutes" min="0" />
           <p>{{ getHoursAndMinutes(serialTime) }}</p>
         </div>
       </div>
@@ -78,10 +78,10 @@
           enter-active-class="animated fadeInRight"
           leave-active-class="animated fadeOutDown"
         >
-          <div class="ui-tag__wrapper" v-for="tag in tags" :key="tag.title">
-            <div class="ui-tag" @click="useTag(tag.title)" :class="{ used: tag.use }">
-              <span class="tag-title"> {{ tag.title }} </span>
-              <span class="button-close" @click.stop="deleteTag(tag.title)"></span>
+          <div class="ui-tag__wrapper" v-for="tag in form.tags" :key="tag">
+            <div class="ui-tag used">
+              <span class="tag-title"> {{ tag }} </span>
+              <span class="button-close" @click.stop="deleteTag(tag)"></span>
             </div>
           </div>
         </transition-group>
@@ -100,41 +100,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, reactive, computed } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import store, { Task } from '@/store';
+import store from '@/store';
 import { useTime } from '@/composition/time';
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const title = ref('');
-    const description = ref('');
-    const whatWatch = ref<'film' | 'serial'>('film');
-    const filmHours = ref(1);
-    const filmMinutes = ref(30);
-    const serialSeason = ref(1);
-    const serialSeries = ref(8);
-    const serialSeriesMinutes = ref(40);
+    const form = reactive({
+      title: '',
+      description: '',
+      whatWatch: 'film',
+      filmHours: 1,
+      filmMinutes: 30,
+      serialSeason: 1,
+      serialSeries: 8,
+      serialSeriesMinutes: 40,
+      tags: [],
+    });
+
     const tagTitle = ref('');
     const tagMenuShow = ref(false);
-    const tags = ref<{ title: string; use: boolean }[]>([]);
 
     const rules = {
       title: { required },
     };
 
-    const v = useVuelidate(rules, { title });
+    const v = useVuelidate(rules, form);
 
     const filmTime = computed((): number => {
-      const time = Number(filmHours.value) * 60 + Number(filmMinutes.value);
-      return time;
+      return Number(form.filmHours) * 60 + Number(form.filmMinutes);
     });
 
     const serialTime = computed((): number => {
-      const time = serialSeason.value * serialSeries.value * serialSeriesMinutes.value;
-      return time;
+      return form.serialSeason * form.serialSeries * form.serialSeriesMinutes;
     });
 
     const onSubmit = async (): Promise<void> => {
@@ -144,26 +145,27 @@ export default defineComponent({
       }
 
       try {
-        const payload: Task = {
-          title: title.value,
-          description: description.value,
-          whatWatch: whatWatch.value,
-          time: whatWatch.value === 'film' ? filmTime.value : serialTime.value,
-          tags: tags.value.map((tag) => tag.title),
+        const payload = {
+          title: form.title,
+          description: form.description,
+          whatWatch: form.whatWatch,
+          time: form.whatWatch === 'film' ? filmTime.value : serialTime.value,
+          tags: form.tags,
           completed: false,
         };
 
         await store.dispatch('createTask', payload);
 
-        title.value = '';
-        description.value = '';
-        whatWatch.value = 'film';
-        tags.value = [];
-        filmHours.value = 1;
-        filmMinutes.value = 30;
-        serialSeason.value = 1;
-        serialSeries.value = 8;
-        serialSeriesMinutes.value = 40;
+        form.title = '';
+        form.description = '';
+        form.whatWatch = 'film';
+        form.filmHours = 1;
+        form.filmMinutes = 30;
+        form.serialSeason = 1;
+        form.serialSeries = 8;
+        form.serialSeriesMinutes = 40;
+        form.tags = [];
+
         tagMenuShow.value = false;
 
         v.value.$reset();
@@ -177,48 +179,26 @@ export default defineComponent({
         return;
       }
 
-      tags.value.push({
-        title: tagTitle.value,
-        use: true,
-      });
+      form.tags.push(tagTitle.value as never);
 
       tagTitle.value = '';
     };
 
-    const deleteTag = (deletedTagTitle: string): void => {
-      tags.value = tags.value.filter((tag) => tag.title !== deletedTagTitle);
-    };
-
-    const useTag = (usedTagTitle: string): void => {
-      tags.value = tags.value.map((tag) => {
-        if (tag.title === usedTagTitle) {
-          tag.use = !tag.use;
-        }
-
-        return tag;
-      });
+    const deleteTag = (title: string): void => {
+      form.tags = form.tags.filter((tag) => tag !== title);
     };
 
     return {
       ...useTime(),
-      title,
-      description,
-      whatWatch,
-      filmHours,
-      filmMinutes,
-      serialSeason,
-      serialSeries,
-      serialSeriesMinutes,
+      form,
       tagTitle,
       tagMenuShow,
-      tags,
       v,
       onSubmit,
       filmTime,
       serialTime,
       newTag,
       deleteTag,
-      useTag,
     };
   },
 });

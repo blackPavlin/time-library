@@ -10,7 +10,7 @@
           <input
             type="email"
             placeholder="Email address"
-            v-model="state.login"
+            v-model="form.login"
             :class="{ error: v.login.$error }"
             @change="v.login.$touch()"
           />
@@ -22,7 +22,7 @@
           <input
             type="password"
             placeholder="Password"
-            v-model="state.password"
+            v-model="form.password"
             :class="{ error: v.password.$error }"
             @change="v.password.$touch()"
           />
@@ -62,9 +62,9 @@ export default defineComponent({
     Banner,
   },
   setup() {
-    const state = reactive({
-      login: 'admin@admin.ru',
-      password: '123456',
+    const form = reactive({
+      login: '',
+      password: '',
     });
 
     const rules = {
@@ -73,7 +73,7 @@ export default defineComponent({
     };
 
     const router = useRouter();
-    const v = useVuelidate(rules, state);
+    const v = useVuelidate(rules, form);
 
     const onSubmit = async (): Promise<void> => {
       try {
@@ -82,7 +82,7 @@ export default defineComponent({
           return;
         }
 
-        await store.dispatch('login', state);
+        await store.dispatch('login', form);
         router.push('/home');
       } catch (error) {
         await store.dispatch('showErrorMessage', error);
@@ -90,7 +90,7 @@ export default defineComponent({
     };
 
     return {
-      state,
+      form,
       onSubmit,
       v,
     };

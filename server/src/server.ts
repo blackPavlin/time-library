@@ -1,35 +1,29 @@
-import path from 'path';
 import fastify from 'fastify';
-import fastifyCors from 'fastify-cors';
-import fastifySensible from 'fastify-sensible';
-import fastifyAuth from 'fastify-auth';
-import fastifyEnv from 'fastify-env';
+import cors from '@fastify/cors';
+import auth from '@fastify/auth';
+import sensible from '@fastify/sensible';
+import authDecorator, { authDecoratorName } from './decorators/auth.decorator';
+import authController from './auth/auth.controller';
+import taskController from './task/task.controller';
 
-import configSchema from './Config';
-import authPlugin from './Plugins/auth.plugin';
-import authController from './Controllers/auth.controller';
-import taskController from './Controllers/task.controller';
-
-const server = fastify({
+export const server = fastify({
 	logger: {
-		level: 'error',
+		level: process.env.NODE_ENV === 'production' ? 'error' : 'info',
 	},
 	ignoreTrailingSlash: true,
 });
 
-server
-	.register(fastifyCors, { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] })
-	.register(fastifySensible)
-	.register(fastifyAuth)
-	.register(fastifyEnv, {
-		schema: configSchema,
-		dotenv: { path: path.join(__dirname, '../env/local.config.env') },
-	})
-	.after(() => {
-		server
-			.register(authPlugin)
-			.register(authController, { prefix: '/api/auth' })
-			.register(taskController, { prefix: '/api/task' });
-	});
+// Plugins
+server.register(cors, {
+	origin: process.env.NODE_ENV !== 'production',
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+});
+server.register(auth);
+server.register(sensible);
 
-export default server;
+// Decorators
+server.decorate(authDecoratorName, authDecorator);
+
+// Controllers
+server.register(authController, { prefix: '/api/auth' });
+server.register(taskController, { prefix: '/api/task' });
