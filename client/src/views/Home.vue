@@ -106,20 +106,39 @@ import { required } from '@vuelidate/validators';
 import store from '@/store';
 import { useTime } from '@/composition/time';
 
+enum WhatWatch {
+  film = 'film',
+  serial = 'serial',
+}
+
+interface Form {
+  title: string;
+  description: string;
+  whatWatch: WhatWatch;
+  filmHours: number;
+  filmMinutes: number;
+  serialSeason: number;
+  serialSeries: number;
+  serialSeriesMinutes: number;
+  tags: string[];
+}
+
 export default defineComponent({
   name: 'Home',
   setup() {
-    const form = reactive({
+    const defaultForm: Form = {
       title: '',
       description: '',
-      whatWatch: 'film',
+      whatWatch: WhatWatch.film,
       filmHours: 1,
       filmMinutes: 30,
       serialSeason: 1,
       serialSeries: 8,
       serialSeriesMinutes: 40,
       tags: [],
-    });
+    };
+
+    const form = reactive(Object.assign({}, defaultForm));
 
     const tagTitle = ref('');
     const tagMenuShow = ref(false);
@@ -149,21 +168,14 @@ export default defineComponent({
           title: form.title,
           description: form.description,
           whatWatch: form.whatWatch,
-          time: form.whatWatch === 'film' ? filmTime.value : serialTime.value,
+          time: form.whatWatch === WhatWatch.film ? filmTime.value : serialTime.value,
           tags: form.tags,
           completed: false,
         };
 
         await store.dispatch('createTask', payload);
 
-        form.title = '';
-        form.description = '';
-        form.whatWatch = 'film';
-        form.filmHours = 1;
-        form.filmMinutes = 30;
-        form.serialSeason = 1;
-        form.serialSeries = 8;
-        form.serialSeriesMinutes = 40;
+        Object.assign(form, defaultForm);
         form.tags = [];
 
         tagMenuShow.value = false;
@@ -179,7 +191,7 @@ export default defineComponent({
         return;
       }
 
-      form.tags.push(tagTitle.value as never);
+      form.tags.push(tagTitle.value);
 
       tagTitle.value = '';
     };

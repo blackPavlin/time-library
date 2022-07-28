@@ -1,10 +1,15 @@
 import { model, Schema, Document } from 'mongoose';
 
+export enum WhatWatch {
+	film = 'film',
+	serial = 'serial',
+}
+
 export interface Task extends Document {
 	user: string;
 	title: string;
 	description: string;
-	whatWatch: 'film' | 'serial';
+	whatWatch: WhatWatch;
 	time: number;
 	tags: string[];
 	completed: boolean;
@@ -26,7 +31,7 @@ const taskSchema = new Schema<Task>(
 		whatWatch: {
 			type: String,
 			required: true,
-			enum: ['film', 'serial'],
+			enum: [WhatWatch.film, WhatWatch.serial],
 		},
 		time: {
 			type: Number,
